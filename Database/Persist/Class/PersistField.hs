@@ -308,7 +308,7 @@ instance PersistField UTCTime where
             (d, _):_ ->
                 Right d
             _ ->
-                case parse8601 s <|> parsePlow s <|> parsePretty of
+                case parse8601 s <|> parsePlow s <|> parsePretty s of
                     Nothing -> Left $ fromPersistValueParseError "UTCTime" x
                     Just x' -> Right x'
       where
