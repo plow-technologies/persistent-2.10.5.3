@@ -308,20 +308,17 @@ instance PersistField UTCTime where
             (d, _):_ ->
                 Right d
             _ ->
-                case parse8601 s <|> parsePretty s of
+                case parse8601 s <|> parsePlow s <|> parsePretty of
                     Nothing -> Left $ fromPersistValueParseError "UTCTime" x
                     Just x' -> Right x'
       where
         s = T.unpack t
-#if MIN_VERSION_time(1,5,0)
-        parse8601 = parseTimeM True defaultTimeLocale format8601
-        parsePretty = parseTimeM True defaultTimeLocale formatPretty
-#else
-        parse8601 = parseTime defaultTimeLocale format8601
-        parsePretty = parseTime defaultTimeLocale formatPretty
-#endif
-        format8601 = "%FT%T%Q"
+        parse8601    = parseTimeM True defaultTimeLocale format8601
+        format8601   = "%FT%T%Q"
+        parsePretty  = parseTimeM True defaultTimeLocale formatPretty
         formatPretty = "%F %T%Q"
+        parsePlow    = parseTimeM True defaultTimeLocale formatPlow
+        formatPlow   = "%F %T" -- 2018-03-06 20:58:57
     fromPersistValue x@(PersistByteString s) =
         case reads $ unpack s of
             (d, _):_ -> Right d
